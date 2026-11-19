@@ -13,6 +13,27 @@ const tmpStore = () => new Store({ dataDir: fs.mkdtempSync(path.join(os.tmpdir()
 const fakeDiscordToken = (signature = 'Z'.repeat(27), id = '123456789012345678') =>
   `${Buffer.from(id).toString('base64url')}.AbC_-7.${signature}`;
 
+test('guard: Pinecone API keys are redacted with identifier boundaries', () => {
+  const token = 'pcsk_' + 'Ab3x'.repeat(9);
+  for (const input of [token, `Pinecone: ${token} ready`]) {
+    const result = inspect(input);
+    assert.deepEqual(result.secrets, ['Pinecone API key']);
+    assert.equal(result.text, input.replace(token, '[Pinecone API key removed]'));
+    assert.deepEqual(inspect(result.text).secrets, [], 'redaction must be idempotent');
+  }
+  for (const ordinary of [
+    'Pinecone API keys start with pcsk_',
+    'pcsk_' + 'a'.repeat(23),
+    'pcsk_' + 'a'.repeat(257),
+    'prefix_' + token,
+    'pcsk_' + 'a'.repeat(100_000),
+  ]) {
+    assert.deepEqual(inspect(ordinary).secrets, [], ordinary.slice(0, 80));
+  }
+  // Unknown opaque suffix characters must not be left unredacted.
+  assert.equal(inspect(token + '_suffix').text, '[Pinecone API key removed]');
+});
+
 test('guard: Vault service, batch and recovery tokens are redacted', () => {
   for (const prefix of ['hvs', 'hvb', 'hvr']) {
     const token = `${prefix}.` + 'Ab3_'.repeat(8);
