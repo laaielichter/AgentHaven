@@ -13,6 +13,25 @@ const tmpStore = () => new Store({ dataDir: fs.mkdtempSync(path.join(os.tmpdir()
 const fakeDiscordToken = (signature = 'Z'.repeat(27), id = '123456789012345678') =>
   `${Buffer.from(id).toString('base64url')}.AbC_-7.${signature}`;
 
+test('guard: legacy Notion integration tokens are removed without masking identifiers', () => {
+  const token = 'secret_' + 'Ab3'.repeat(14) + 'X'; // Synthetic 43-character body.
+  for (const input of [token, `Notion credential: ${token}`]) {
+    const result = inspect(input);
+    assert.deepEqual(result.secrets, ['Notion integration token']);
+    assert.equal(result.text, input.replace(token, '[Notion integration token removed]'));
+    assert.deepEqual(inspect(result.text).secrets, [], 'redaction is idempotent');
+  }
+  for (const ordinary of [
+    'secret_key', 'secret_token_value',
+    'secret_' + 'A'.repeat(42), 'secret_' + 'A'.repeat(44),
+    'prefix_' + token, 'not' + token, token + '_suffix',
+    'secret_' + 'A'.repeat(150_000),
+  ]) {
+    assert.deepEqual(inspect(ordinary).secrets, [], ordinary.slice(0, 80));
+    assert.equal(inspect(ordinary).text, ordinary);
+  }
+});
+
 test('guard: Firecrawl API keys are fully removed without masking ordinary text', () => {
   for (const token of [
     'fc-' + 'Ab3x'.repeat(9),
