@@ -13,6 +13,27 @@ const tmpStore = () => new Store({ dataDir: fs.mkdtempSync(path.join(os.tmpdir()
 const fakeDiscordToken = (signature = 'Z'.repeat(27), id = '123456789012345678') =>
   `${Buffer.from(id).toString('base64url')}.AbC_-7.${signature}`;
 
+test('guard: classifies OpenRouter keys separately from OpenAI keys', () => {
+  const token = 'sk-or-v1-' + 'Ab3d'.repeat(16); // 64 synthetic hex digits.
+  for (const input of [token, `OpenRouter credential: ${token}`]) {
+    const scanned = inspect(input);
+    assert.deepEqual(scanned.secrets, ['OpenRouter API key']);
+    assert.equal(scanned.text, input.replace(token, '[OpenRouter API key removed]'));
+    assert.deepEqual(inspect(scanned.text).secrets, [], 'redaction must be idempotent');
+  }
+  const openai = 'sk-proj-' + 'Ab3d'.repeat(9);
+  assert.deepEqual(inspect(openai).secrets, ['OpenAI key']);
+  for (const ordinary of [
+    'sk-or-v1-', 'sk-or-v1-' + 'A'.repeat(63),
+    'sk-or-v1-' + 'A'.repeat(65),
+    'sk-or-v2-' + 'A'.repeat(64),
+    'prefix_' + token, 'not' + token, token + '_suffix',
+    'sk-or-v1-' + 'a'.repeat(150_000),
+  ]) {
+    assert.deepEqual(inspect(ordinary).secrets, [], ordinary.slice(0, 80));
+  }
+});
+
 test('guard: Firecrawl API keys are fully removed without masking ordinary text', () => {
   for (const token of [
     'fc-' + 'Ab3x'.repeat(9),

@@ -33,7 +33,10 @@ function isPostHogPrivateToken(token) {
 const SECRET_RULES = [
   ['private key', /-----BEGIN (?:[A-Z ]+ )?PRIVATE KEY-----[\s\S]*?(?:-----END (?:[A-Z ]+ )?PRIVATE KEY-----|$)/g],
   ['Anthropic key', /\bsk-ant-[A-Za-z0-9_-]{20,}/g],
-  ['OpenAI key', /\bsk-(?:proj-|svcacct-|admin-)?[A-Za-z0-9_-]{20,}/g],
+  // OpenRouter's sk-or-v1- prefix identifies a distinct provider. Classify
+  // the fixed 64-hex payload before handling generic sk- provider keys.
+  ['OpenRouter API key', /(?<![A-Za-z0-9_-])sk-or-v1-[0-9a-fA-F]{64}(?![A-Za-z0-9_-])/g],
+  ['OpenAI key', /\bsk-(?!or-v1-)(?:proj-|svcacct-|admin-)?[A-Za-z0-9_-]{20,}/g],
   // Firecrawl keys use the documented fc- prefix. The uppercase requirement
   // and body-length bounds are heuristics to avoid masking ordinary identifiers,
   // not guarantees of the token format.
