@@ -80,6 +80,11 @@ const SECRET_RULES = [
   ['1Password service account token', /(?<![A-Za-z0-9_])ops_eyJ[A-Za-z0-9+/]{250,4096}={0,3}(?![A-Za-z0-9_+/=])/g],
   // Cloudflare uses 40 alphanumeric characters and an eight-digit hex checksum.
   ['Cloudflare API credential', /(?<![A-Za-z0-9_-])(?:cfk|cfut|cfat)_[A-Za-z0-9]{40}[0-9a-fA-F]{8}(?![A-Za-z0-9_-])/g],
+  // Wrangler login OAuth credentials use cfoat_, not the cfk_/cfut_/cfat_
+  // API-key shapes. Cloudflare does not publish a fixed payload length;
+  // a conservative minimum and full identifier boundaries limit false hits.
+  ['Cloudflare Wrangler OAuth token', /(?<![A-Za-z0-9_-])cfoat_[A-Za-z0-9_-]{24,}(?![A-Za-z0-9_-])/g],
+
   ['Linear API key', /(?<![A-Za-z0-9_])lin_api_[A-Za-z0-9]{40}(?![A-Za-z0-9_])/g],
   ['DigitalOcean token', /(?<![A-Za-z0-9_])(?:dop|doo|dor)_v1_[0-9a-f]{64}(?![A-Za-z0-9_])/g],
   // Databricks documents dapi-prefixed personal access tokens with 32 hex digits.
