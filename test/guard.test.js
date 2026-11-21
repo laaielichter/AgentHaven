@@ -1174,3 +1174,26 @@ test('guard: redacts generated-format PostHog secrets without masking prose', ()
   assert.equal(inspect(longToken).text, marker);
   assert.ok(Number(process.hrtime.bigint() - started) / 1e6 < 500, 'PostHog scan exceeded 500 ms');
 });
+
+test('guard: redact CircleCI personal and project API tokens', () => {
+  for (const prefix of ['CCIPAT', 'CCIPRJ']) {
+    const token = prefix + '_' + 'Ab3x'.repeat(6) + '_' + 'a1b2c3d4'.repeat(5);
+    for (const input of [token, `CircleCI token ${token} ready`]) {
+      const scanned = inspect(input);
+      assert.deepEqual(scanned.secrets, ['CircleCI API token']);
+      assert.equal(scanned.text, input.replace(token, '[CircleCI API token removed]'));
+      assert.deepEqual(inspect(scanned.text).secrets, [], 'redaction must be idempotent');
+    }
+  }
+  const token = 'CCIPAT_' + 'Ab3x'.repeat(6) + '_' + 'a1b2c3d4'.repeat(5);
+  for (const ordinary of [
+    'CircleCI tokens start with CCIPAT_',
+    'CCIPAT_' + 'Ab3x'.repeat(4) + '_' + 'a1b2c3d4'.repeat(5),
+    'CCIPRJ_' + 'Ab3x'.repeat(6) + '_' + 'a1b2c3d4'.repeat(4),
+    'CCIPAT_' + 'Ab3x'.repeat(6) + '_' + 'g'.repeat(40),
+    'prefix_' + token,
+    token + '_suffix',
+  ]) {
+    assert.deepEqual(inspect(ordinary).secrets, [], ordinary.slice(0, 80));
+  }
+});

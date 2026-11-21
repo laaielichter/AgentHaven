@@ -71,6 +71,9 @@ const SECRET_RULES = [
   ['Discord webhook URL', /\bhttps:\/\/(?:discord|discordapp)\.com\/api(?:\/v\d{1,2})?\/webhooks\/\d{17,20}\/[A-Za-z0-9_-]{30,128}(?![A-Za-z0-9_-])/g],
   ['GitHub token', /\b(?:gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{40,})/g],
   ['GitLab token', /\bglpat-[A-Za-z0-9_-]{20,}/g],
+  // CircleCI's typed personal/project tokens contain a base58 UUID and a
+  // 40-character hexadecimal credential. Require complete token boundaries.
+  ['CircleCI API token', /(?<![A-Za-z0-9_-])CCIP(?:AT|RJ)_[1-9A-HJ-NP-Za-km-z]{20,30}_[0-9a-fA-F]{40}(?![A-Za-z0-9_-])/g],
   ['GitLab runner authentication token', /(?<![A-Za-z0-9_-])(?:glrt|glrtr)-[A-Za-z0-9_-]{20,128}(?![A-Za-z0-9_-])/g],
   // GitLab deploy tokens have a distinct prefix. Requiring uppercase is a
   // heuristic to avoid lowercase identifiers, not a guarantee of token format.
