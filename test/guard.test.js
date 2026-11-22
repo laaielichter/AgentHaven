@@ -321,6 +321,24 @@ test('guard: redacts 1Password service account tokens without matching lookalike
   assert.ok(Number(process.hrtime.bigint() - started) / 1e6 < 500);
 });
 
+test('guard: removes long session-token assignments from shared agent text', () => {
+  const cases = [
+    ['AWS_SESSION_TOKEN=temporarysessionvalue', 'AWS_SESSION_TOKEN=[secret removed]'],
+    ['OAUTH_SESSION_TOKEN="readable session token"', 'OAUTH_SESSION_TOKEN="[secret removed]"'],
+    ["session_token: 'lowentropyvalue'", "session_token: '[secret removed]'"],
+    ['{"session_token": "local-synthetic-token"}', '{"session_token": "[secret removed]"}'],
+  ];
+  for (const [input, expected] of cases) {
+    const result = inspect(input);
+    assert.equal(result.text, expected, input);
+    assert.deepEqual(result.secrets, ['password'], input);
+    assert.deepEqual(inspect(result.text).secrets, [], 'redaction must be idempotent');
+  }
+  for (const ordinary of ['AWS_SESSION_TOKEN_COUNT=4', 'session_token field is optional', 'SESSION_TOKEN_ENABLED=true']) {
+    assert.deepEqual(inspect(ordinary).secrets, [], ordinary);
+  }
+});
+
 test('guard: redacts values after quoted JSON and YAML secret keys', () => {
   for (const [input, expected] of [
     ['password: hunter2hunter2', 'password: [secret removed]'],
