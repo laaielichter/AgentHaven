@@ -321,6 +321,34 @@ test('HTTP API: CRUD, conflict status, host/origin protection, UI', async () => 
   }
 });
 
+test('HTTP API: cross-site GETs cannot invoke state-changing endpoints', async () => {
+  const { server, url } = await start({ store: tmpStore() });
+  try {
+    for (const endpoint of ['api/inbox', 'api/tasks']) {
+      const crossSite = await fetch(`${url}${endpoint}`, {
+        headers: { 'Sec-Fetch-Site': 'cross-site' },
+      });
+      assert.equal(crossSite.status, 403, endpoint);
+      assert.match((await crossSite.json()).error, /forbidden cross-site request/);
+
+      const origin = await fetch(`${url}${endpoint}`, {
+        headers: { Origin: 'https://outside.example' },
+      });
+      assert.equal(origin.status, 403, endpoint);
+      assert.match((await origin.json()).error, /forbidden origin/);
+
+      const sameOrigin = await fetch(`${url}${endpoint}`, {
+        headers: { 'Sec-Fetch-Site': 'same-origin' },
+      });
+      assert.equal(sameOrigin.status, 200, endpoint);
+    }
+    // Non-browser clients do not send Fetch Metadata; preserve existing usage.
+    assert.equal((await fetch(`${url}api/tasks`)).status, 200);
+  } finally {
+    server.close();
+  }
+});
+
 test('HTTP API: known routes report 405 and oversized requests return 413 without changing the board', async () => {
   const store = tmpStore();
   const { server, url } = await start({ store });

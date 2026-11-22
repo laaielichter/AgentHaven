@@ -202,12 +202,17 @@ function createServer({ store, dataDir, human = 'you', onError = () => {}, dream
     const port = server.address().port;
     const allowedHosts = [`127.0.0.1:${port}`, `localhost:${port}`];
     if (!allowedHosts.includes(req.headers.host)) return send(403, { error: 'forbidden host' });
-    if (req.method !== 'GET' && req.headers.origin && !allowedHosts.map((h) => `http://${h}`).includes(req.headers.origin)) {
+    // Some GET routes mutate local state (e.g. marking inbox messages read),
+    // so Origin checks must not exempt GET requests.
+    if (req.headers.origin && !allowedHosts.map((h) => `http://${h}`).includes(req.headers.origin)) {
       return send(403, { error: 'forbidden origin' });
     }
     const url = new URL(req.url, `http://${req.headers.host}`);
 
     if (url.pathname.startsWith('/api/')) {
+      // Browser cross-site requests such as <img> GETs typically have no Origin.
+      // Fetch Metadata blocks those requests before route side effects execute.
+      if (req.headers['sec-fetch-site'] === 'cross-site') return send(403, { error: 'forbidden cross-site request' });
       let s;
       try { s = pick(url.searchParams); } catch (err) { return send(400, { error: err.message }); }
       const header = req.headers['x-agenthaven-agent'];
