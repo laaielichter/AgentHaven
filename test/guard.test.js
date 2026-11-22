@@ -1174,3 +1174,30 @@ test('guard: redacts generated-format PostHog secrets without masking prose', ()
   assert.equal(inspect(longToken).text, marker);
   assert.ok(Number(process.hrtime.bigint() - started) / 1e6 < 500, 'PostHog scan exceeded 500 ms');
 });
+
+test('guard: redact Azure Storage SAS URL signatures while preserving URL context', () => {
+  const raw = 'Ab1+/'.repeat(8) + 'xyz=';
+  const encoded = encodeURIComponent(raw);
+  const marker = '[Azure Storage SAS signature removed]';
+  for (const input of [
+    `https://myacct.blob.core.windows.net/c/blob.txt?sv=2024-01-01&sp=r&sig=${raw}`,
+    `https://myacct.dfs.core.windows.net/c/blob.txt?sig=${encoded}&sv=2024-01-01`,
+    `HTTPS://myacct.file.core.windows.net/share/doc?Sv=2024-01-01&SIG=${encoded}`,
+    `https://myacct.queue.core.windows.net/tasks?sig=${raw}`,
+  ]) {
+    const result = inspect(input);
+    assert.deepEqual(result.secrets, ['Azure Storage SAS signature']);
+    assert.ok(!result.text.includes(raw) && !result.text.includes(encoded));
+    assert.ok(result.text.includes('sig=' + marker) || result.text.includes('SIG=' + marker));
+    assert.deepEqual(inspect(result.text).secrets, [], 'must be idempotent');
+  }
+  for (const ordinary of [
+    `https://example.com/c/blob?sig=${raw}`,
+    `https://myacct.blob.core.windows.net.evil.org/c?sig=${raw}`,
+    `https://myacct.blob.core.windows.net/c?signature=${raw}`,
+    'https://myacct.blob.core.windows.net/c?sig=short',
+    'The query parameter sig may authenticate a SAS URL.',
+  ]) {
+    assert.deepEqual(inspect(ordinary).secrets, [], 'ordinary context should not be redacted');
+  }
+});

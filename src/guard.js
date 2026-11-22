@@ -93,6 +93,9 @@ const SECRET_RULES = [
   ['Telegram bot token', /(?<!\d)\d{8,10}:[A-Za-z0-9_-]{35}(?![A-Za-z0-9_-])/g],
   ['AWS access key', /\b(?:AKIA|ASIA)[0-9A-Z]{16}\b/g],
   ['Google API key', /\bAIza[0-9A-Za-z_-]{35}\b/g],
+  // Azure Storage SAS query signatures authorize temporary resource access.
+  // Match the storage endpoint and replace only the signature, preserving URL context.
+  ['Azure Storage SAS signature', /(?<![A-Za-z0-9_.-])(https:\/\/[a-z0-9-]+\.(?:blob|dfs|file|queue|table)\.core\.windows\.net\/[^\s?#]*\?(?:[^\s#&]*&)*sig=)([A-Za-z0-9+/%=]{40,128})(?![A-Za-z0-9+/%=])/gi],
   ['Azure Storage account key', /(?<![A-Za-z0-9_])(AccountKey[ \t]*=[ \t]*)[A-Za-z0-9+/]{86}==(?=[^A-Za-z0-9+/=]|$)/gi],
   ['Slack token', /\bxox[abposr]-[A-Za-z0-9-]{10,}/g],
   // App-level (Socket Mode) tokens have a version, Slack app ID, numeric ID and
@@ -181,6 +184,7 @@ function inspect(input) {
       if (kind === 'connection string password') return `${m[1]}[secret removed]${m[3]}`;
       if (kind === 'authorization token') return `${m[1]}[authorization token removed]`;
       if (kind === 'Azure Storage account key') return `${m[1]}[Azure Storage account key removed]`;
+      if (kind === 'Azure Storage SAS signature') return `${m[1]}[Azure Storage SAS signature removed]`;
       return `[${kind} removed]`;
     });
   }
