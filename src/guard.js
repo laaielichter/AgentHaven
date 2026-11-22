@@ -91,6 +91,9 @@ const SECRET_RULES = [
   // Telegram bot tokens are 8-10 digits, a colon and 35 characters. No word
   // boundary in front: in an API URL the token follows `bot` directly.
   ['Telegram bot token', /(?<!\d)\d{8,10}:[A-Za-z0-9_-]{35}(?![A-Za-z0-9_-])/g],
+  // SigV4 presigned URLs grant time-limited object access. Their hex-only
+  // signatures may evade entropy-based rules, so mask the precise query value.
+  ['AWS presigned URL signature', /(?<=X-Amz-Signature=)[a-f0-9]{64}(?![A-Za-z0-9_%])/gi],
   ['AWS access key', /\b(?:AKIA|ASIA)[0-9A-Z]{16}\b/g],
   ['Google API key', /\bAIza[0-9A-Za-z_-]{35}\b/g],
   ['Azure Storage account key', /(?<![A-Za-z0-9_])(AccountKey[ \t]*=[ \t]*)[A-Za-z0-9+/]{86}==(?=[^A-Za-z0-9+/=]|$)/gi],
