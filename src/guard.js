@@ -96,6 +96,9 @@ const SECRET_RULES = [
   ['1Password service account token', /(?<![A-Za-z0-9_])ops_eyJ[A-Za-z0-9+/]{250,4096}={0,3}(?![A-Za-z0-9_+/=])/g],
   // Cloudflare uses 40 alphanumeric characters and an eight-digit hex checksum.
   ['Cloudflare API credential', /(?<![A-Za-z0-9_-])(?:cfk|cfut|cfat)_[A-Za-z0-9]{40}[0-9a-fA-F]{8}(?![A-Za-z0-9_-])/g],
+  // Figma PATs commonly use a figd_ prefix. Figma does not publish a
+  // guaranteed body format, so the length bound is a redaction heuristic.
+  ['Figma personal access token', /(?<![A-Za-z0-9_-])figd_[A-Za-z0-9_-]{40,200}(?![A-Za-z0-9_-])/g],
   ['Linear API key', /(?<![A-Za-z0-9_])lin_api_[A-Za-z0-9]{40}(?![A-Za-z0-9_])/g],
   ['DigitalOcean token', /(?<![A-Za-z0-9_])(?:dop|doo|dor)_v1_[0-9a-f]{64}(?![A-Za-z0-9_])/g],
   // Doppler publishes strict formats for its CLI, personal, service, service
