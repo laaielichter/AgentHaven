@@ -290,8 +290,34 @@ switch (cmd) {
   case 'help': case '--help': case '-h':
     console.log(HELP);
     break;
-  default:
-    console.error(`Unknown command "${cmd}".\n`);
-    console.error(HELP);
+  default: {
+    const KNOWN_COMMANDS = [
+      'serve', 'mcp', 'tools', 'connect', 'config', 'link', 'unlink',
+      'sync', 'instructions', 'board', 'status', 'repo', 'checks',
+      'radar', 'dream', 'hook', 'version', 'help'
+    ];
+    const distance = (a, b) => {
+      const dp = Array.from({ length: a.length + 1 }, () => new Array(b.length + 1).fill(0));
+      for (let i = 0; i <= a.length; i++) dp[i][0] = i;
+      for (let j = 0; j <= b.length; j++) dp[0][j] = j;
+      for (let i = 1; i <= a.length; i++) {
+        for (let j = 1; j <= b.length; j++) {
+          dp[i][j] = a[i - 1] === b[j - 1] ? dp[i - 1][j - 1] : 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]);
+        }
+      }
+      return dp[a.length][b.length];
+    };
+    let closest = null;
+    let minD = Infinity;
+    for (const known of KNOWN_COMMANDS) {
+      const d = distance(cmd, known);
+      if (d < minD) {
+        minD = d;
+        closest = known;
+      }
+    }
+    const suggestion = minD <= 2 ? ` Did you mean "${closest}"?` : '';
+    console.error(`Unknown command "${cmd}".${suggestion}\nRun "agenthaven --help" for all commands.`);
     process.exit(1);
+  }
 }

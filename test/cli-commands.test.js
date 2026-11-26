@@ -118,3 +118,22 @@ test('<command> --help and -h print the usage without running the command (#179)
   assert.ok(!fs.existsSync(path.join(share, 'WORKBOARD.md')), 'link --help did not link the folder');
   assert.deepEqual(fs.readdirSync(home), [], 'nothing was written to AGENTHAVEN_HOME');
 });
+
+test('a mistyped command suggests the closest command or shows help pointer (#209)', () => {
+  const { run } = fixture();
+
+  const typo = run('stauts');
+  assert.equal(typo.status, 1);
+  assert.equal(typo.stdout, '');
+  assert.match(typo.stderr, /^Unknown command "stauts"\. Did you mean "status"\?\nRun "agenthaven --help" for all commands\.\n$/);
+
+  const typo2 = run('boards');
+  assert.equal(typo2.status, 1);
+  assert.equal(typo2.stdout, '');
+  assert.match(typo2.stderr, /^Unknown command "boards"\. Did you mean "board"\?\nRun "agenthaven --help" for all commands\.\n$/);
+
+  const noMatch = run('banana');
+  assert.equal(noMatch.status, 1);
+  assert.equal(noMatch.stdout, '');
+  assert.match(noMatch.stderr, /^Unknown command "banana"\.\nRun "agenthaven --help" for all commands\.\n$/);
+});
