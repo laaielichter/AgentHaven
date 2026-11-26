@@ -66,6 +66,8 @@ const SECRET_RULES = [
   ['Docker Hub access token', /(?<![A-Za-z0-9_])dckr_(?:pat|oat)_(?=[A-Za-z0-9-]*[A-Z])[A-Za-z0-9-]{27,}(?![A-Za-z0-9_-])/g],
   // Supabase keys have a 22-character random part and 8-character checksum.
   // At least one uppercase letter avoids matching ordinary snake_case names.
+  // PlanetScale API tokens, OAuth tokens, and passwords have distinct pscale_ type prefixes.
+  ['PlanetScale credential', /(?<![A-Za-z0-9_.=-])pscale_(?:tkn|oauth|pw)_[A-Za-z0-9_.=-]{32,64}(?![A-Za-z0-9_.=-])/g],
   ['Supabase secret key', /(?<![A-Za-z0-9_])sb_secret_(?=[A-Za-z0-9_-]{0,30}[A-Z])[A-Za-z0-9_-]{22}_[A-Za-z0-9_-]{8}(?![A-Za-z0-9_-])/g],
   // Vercel's five credential types have distinct prefixes; the opaque payload
   // bound is a detection heuristic, not a fixed-format token validator.
