@@ -145,6 +145,9 @@ const SECRET_RULES = [
   ['PostHog private token', /(?<![A-Za-z0-9_-])(?:(?:phx|phs)_[2-9A-HJ-NP-Za-km-z]{48,}|(?:pha|phr)_[2-9A-HJ-NP-Za-km-z]{44,})(?![A-Za-z0-9_-])/g, isPostHogPrivateToken],
   ['Hugging Face token', /\bhf_[A-Za-z0-9]{30,}/g],
   ['npm token', /\bnpm_[A-Za-z0-9]{36}\b/g],
+  // Airtable personal access tokens contain a 17-character ID (pat + 14)
+  // and a separate 64-character secret; redact both components together.
+  ['Airtable personal access token', /(?<![A-Za-z0-9_-])pat[A-Za-z0-9]{14}\.[A-Za-z0-9_-]{64}(?![A-Za-z0-9_-])/g],
   // Use the scanner-observed token shape, not a broad prefix that eats identifiers.
   ['Notion integration token', /(?<![A-Za-z0-9_-])ntn_[0-9]{11}[A-Za-z0-9]{35}(?![A-Za-z0-9_-])/g],
   // LangSmith personal access tokens and service keys have distinct prefixes.
