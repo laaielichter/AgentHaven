@@ -84,6 +84,8 @@ const SECRET_RULES = [
   ['GitHub token', /\b(?:gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{40,})/g],
   // Bitbucket API tokens use ATAT headers; match the 192-character current format.
   ['Bitbucket API token', /(?<![A-Za-z0-9_-])ATATT3xFfGF0[A-Za-z0-9_-]{171}=[0-9A-F]{8}(?![A-Za-z0-9_=-])/g],
+  // GitLab OAuth application secrets use the gloas- prefix and fixed token body.
+  ['GitLab OAuth app secret', /(?<![A-Za-z0-9_.-])gloas-[A-Za-z0-9_-]{64}(?![A-Za-z0-9_.-])/g],
   ['GitLab token', /\bglpat-[A-Za-z0-9_-]{20,}/g],
   // GitLab CI job tokens grant scoped access while a pipeline runs.
   // Handle both legacy opaque tokens and the newer three-segment JWT form;
