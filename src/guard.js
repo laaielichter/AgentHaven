@@ -77,6 +77,8 @@ const SECRET_RULES = [
   ['Tailscale key', /(?<=^|[^A-Za-z0-9_-])tskey-(?:api|auth|client|scim|webhook)-[A-Za-z0-9]{8,}-(?=[A-Za-z0-9]*[A-Z])[A-Za-z0-9]{12,}(?=[^A-Za-z0-9_-]|$)/g],
   // Pulumi Cloud credentials use pul- followed by a lowercase hexadecimal body.
   ['Pulumi Cloud access token', /(?<![A-Za-z0-9_-])pul-[0-9a-f]{40}(?![A-Za-z0-9_-])/g],
+  // Perplexity API keys have a pplx- prefix and 48-character opaque body.
+  ['Perplexity API key', /(?<![A-Za-z0-9_-])pplx-[A-Za-z0-9]{48}(?![A-Za-z0-9_-])/g],
   ['Replicate token', /\br8_[A-Za-z0-9]{30,}\b/g],
   ['Discord bot token', /(?<![A-Za-z0-9_-])[A-Za-z0-9_-]{23,28}\.[A-Za-z0-9_-]{6,7}\.[A-Za-z0-9_-]{27,38}(?=[^A-Za-z0-9_-]|$)/g, isDiscordBotToken],
   // The webhook URL itself grants unauthenticated posting access.
