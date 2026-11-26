@@ -70,6 +70,8 @@ const SECRET_RULES = [
   // Vercel's five credential types have distinct prefixes; the opaque payload
   // bound is a detection heuristic, not a fixed-format token validator.
   ['Vercel API credential', /(?<![A-Za-z0-9_-])vc[piark]_[A-Za-z0-9]{40,80}(?![A-Za-z0-9_-])/g],
+  // Grafana Cloud API tokens use glc_ followed by a bounded base64-style payload.
+  ['Grafana Cloud API token', /(?<![A-Za-z0-9_])glc_[A-Za-z0-9+\/]{32,400}={0,3}(?![A-Za-z0-9_+\/=])/g],
   ['Grafana service account token', /(?<![A-Za-z0-9_-])glsa_[A-Za-z0-9]{32}_[A-Fa-f0-9]{8}(?![A-Za-z0-9_-])/g],
   // Tailscale API, auth, OAuth client, SCIM and webhook keys use typed,
   // two-component tskey-* values; require uppercase in the second segment
