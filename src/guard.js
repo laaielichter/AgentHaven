@@ -36,6 +36,8 @@ function isTelegramBotToken(token) {
 }
 
 const SECRET_RULES = [
+  // These headers are credentials even when their values have low entropy.
+  ['HTTP API credential', /^([ \t]*(?:X-API-Key|X-Auth-Token)[ \t]*:[ \t]*)(?!\[API credential removed\])(?=[^\s\r\n])[^\r\n]+/gmi],
   ['private key', /-----BEGIN (?:[A-Z ]+ )?PRIVATE KEY-----[\s\S]*?(?:-----END (?:[A-Z ]+ )?PRIVATE KEY-----|$)/g],
   ['Anthropic key', /\bsk-ant-[A-Za-z0-9_-]{20,}/g],
   ['OpenAI key', /\bsk-(?:proj-|svcacct-|admin-)?[A-Za-z0-9_-]{20,}/g],
@@ -230,6 +232,7 @@ function inspect(input) {
       // Keep the key name or URL around a password, replace only the secret itself.
       if (kind === 'password') return `${m[1]}[secret removed]`;
       if (kind === 'connection string password') return `${m[1]}[secret removed]${m[3]}`;
+      if (kind === 'HTTP API credential') return `${m[1]}[API credential removed]`;
       if (kind === 'authorization token') return `${m[1]}[authorization token removed]`;
       if (kind === 'HTTP cookie header') return `${m[1]}[cookie value removed]`;
       if (kind === 'Azure Storage account key') return `${m[1]}[Azure Storage account key removed]`;
