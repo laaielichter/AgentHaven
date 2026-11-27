@@ -119,6 +119,8 @@ const SECRET_RULES = [
   // NVIDIA NGC personal API keys use the nvapi- prefix. Require an uppercase
   // payload character to avoid redacting ordinary lowercase identifiers.
   ['NVIDIA NGC API key', /(?<![A-Za-z0-9_-])nvapi-(?=[A-Za-z0-9_-]*[A-Z])[A-Za-z0-9_-]{24,}(?![A-Za-z0-9_-])/g],
+  // Shippo authenticates live/test shipping requests with prefixed 40-hex tokens.
+  ['Shippo API token', /(?<![A-Za-z0-9_])shippo_(?:live|test)_[a-fA-F0-9]{40}(?![A-Za-z0-9_])/g],
   ['Shopify token', /(?<![A-Za-z0-9_])(?:shpat|shpca|shppa|shpss)_[0-9a-fA-F]{32}(?![A-Za-z0-9_])/g],
   // Telegram bot tokens contain an 8-16-digit ID (within 52 bits), a colon and 35 characters. No word
   // boundary in front: in an API URL the token follows `bot` directly.
