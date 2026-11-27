@@ -119,6 +119,8 @@ const SECRET_RULES = [
   // Telegram bot tokens contain an 8-16-digit ID (within 52 bits), a colon and 35 characters. No word
   // boundary in front: in an API URL the token follows `bot` directly.
   ['Telegram bot token', /(?<!\d)\d{8,16}:[A-Za-z0-9_-]{35}(?![A-Za-z0-9_-])/g, isTelegramBotToken],
+  // Bedrock long-term bearer keys use ABSK and a bounded base64 body.
+  ['Amazon Bedrock API key', /(?<![A-Za-z0-9_+/=.-])ABSK[A-Za-z0-9+/]{109,269}={0,2}(?![A-Za-z0-9_+/=.-])/g],
   ['AWS access key', /\b(?:AKIA|ASIA)[0-9A-Z]{16}\b/g],
   // Azure DevOps PATs are 84 alphanumerics with AZDO at offset 75 (Microsoft format).
   ['Azure DevOps PAT', /(?<![A-Za-z0-9_-])[A-Za-z0-9]{75}AZDO[A-Za-z0-9]{5}(?![A-Za-z0-9_-])/g],
