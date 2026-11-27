@@ -73,6 +73,8 @@ const SECRET_RULES = [
   // Supabase keys have a 22-character random part and 8-character checksum.
   // At least one uppercase letter avoids matching ordinary snake_case names.
   ['Supabase secret key', /(?<![A-Za-z0-9_])sb_secret_(?=[A-Za-z0-9_-]{0,30}[A-Z])[A-Za-z0-9_-]{22}_[A-Za-z0-9_-]{8}(?![A-Za-z0-9_-])/g],
+  // Scoped Supabase management PATs begin with sbp_fc; length floor is a detection heuristic.
+  ['Supabase scoped PAT', /(?<![A-Za-z0-9_-])sbp_fc[A-Za-z0-9_-]{24,}(?![A-Za-z0-9_-])/g],
   // Vercel's five credential types have distinct prefixes; the opaque payload
   // bound is a detection heuristic, not a fixed-format token validator.
   // Heroku's v2 keys contain the HRKU-AA marker and a 58-character token body.
