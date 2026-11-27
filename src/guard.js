@@ -131,6 +131,8 @@ const SECRET_RULES = [
   // Cloud Storage V4 signed URLs carry HMAC (64 hex) or longer RSA
   // signatures that grant temporary object access without other credentials.
   ['Google Cloud Storage signed URL signature', /(?<=X-Goog-Signature=)[a-f0-9]{64,1024}(?![A-Za-z0-9_%])/gi],
+  // Mapbox secret tokens use sk. followed by a base64url JWT-like payload; do not classify public pk. tokens as secrets.
+  ['Mapbox secret token', /(?<![A-Za-z0-9_.-])sk\.eyJ[A-Za-z0-9_-]{16,1024}\.[A-Za-z0-9_-]{20,256}(?![A-Za-z0-9_-])/g],
   ['Google API key', /\bAIza[0-9A-Za-z_-]{35}\b/g],
   // Google OAuth client secrets have a GOCSPX- prefix and 28 opaque characters.
   // Require token boundaries so no partial credentials are marked as removed.
