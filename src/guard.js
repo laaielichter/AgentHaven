@@ -78,6 +78,8 @@ const SECRET_RULES = [
   // Heroku's v2 keys contain the HRKU-AA marker and a 58-character token body.
   ['Heroku API key v2', /(?<![A-Za-z0-9_-])HRKU-AA[A-Za-z0-9_-]{58}(?![A-Za-z0-9_-])/g],
   ['Vercel API credential', /(?<![A-Za-z0-9_-])vc[piark]_[A-Za-z0-9]{40,80}(?![A-Za-z0-9_-])/g],
+  // Netlify's five token classes use nf[p,c,o,u,b] and a 40-character envelope.
+  ['Netlify authentication token', /(?<![A-Za-z0-9_-])nf[pcoub]_[A-Za-z0-9_]{36}(?![A-Za-z0-9_-])/g],
   ['Grafana service account token', /(?<![A-Za-z0-9_-])glsa_[A-Za-z0-9]{32}_[A-Fa-f0-9]{8}(?![A-Za-z0-9_-])/g],
   // Tailscale API, auth, OAuth client, SCIM and webhook keys use typed,
   // two-component tskey-* values; require uppercase in the second segment
