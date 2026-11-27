@@ -36,6 +36,8 @@ function isTelegramBotToken(token) {
 }
 
 const SECRET_RULES = [
+  // Native age identities are Bech32-encoded private keys, distinct from PEM.
+  ['age identity private key', /(?<![A-Za-z0-9_.-])AGE-SECRET-KEY-1[QPZRY9X8GF2TVDW0S3JN54KHCE6MUA7L]{58}(?![A-Za-z0-9_.-])/g],
   ['private key', /-----BEGIN (?:[A-Z ]+ )?PRIVATE KEY-----[\s\S]*?(?:-----END (?:[A-Z ]+ )?PRIVATE KEY-----|$)/g],
   ['Anthropic key', /\bsk-ant-[A-Za-z0-9_-]{20,}/g],
   ['OpenAI key', /\bsk-(?:proj-|svcacct-|admin-)?[A-Za-z0-9_-]{20,}/g],
