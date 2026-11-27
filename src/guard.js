@@ -190,6 +190,8 @@ const SECRET_RULES = [
   // Cookie and Set-Cookie headers can carry session credentials that are too
   // short or low-entropy for a generic token detector. Preserve the header name.
   ['HTTP cookie header', /^([ \t]*(?:Cookie|Set-Cookie)[ \t]*:[ \t]*)(?=[^=;\r\n \t]+=[^\r\n]+)[^\r\n]+/gmi],
+  // GitLab session cookie assignments are bearer credentials even outside Cookie headers.
+  ['GitLab session cookie', /(?<![A-Za-z0-9_-])_gitlab_session=[A-Za-z0-9_%+./~=-]{20,4096}(?![A-Za-z0-9_%+./~=-])/g],
   ['JWT', /\beyJ[A-Za-z0-9_-]{10,}\.eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}/g],
   // Redact the value, not the closing quote; the normal password replacement
   // then preserves both delimiters even for spaces and escaped quotes.
