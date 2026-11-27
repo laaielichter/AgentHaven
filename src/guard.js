@@ -107,6 +107,8 @@ const SECRET_RULES = [
   ['GitLab runner authentication token', /(?<![A-Za-z0-9_-])(?:glrt|glrtr)-[A-Za-z0-9_-]{20,128}(?![A-Za-z0-9_-])/g],
   // GitLab pipeline trigger tokens use the distinct glptt- prefix. Require
   // a mixed-case opaque payload to avoid masking identifiers from docs.
+  // GitLab SCIM API tokens use a distinctive glsoat- prefix.
+  ['GitLab SCIM token', /(?<![A-Za-z0-9_.-])glsoat-[A-Za-z0-9_-]{20}(?![A-Za-z0-9_.-])/g],
   ['GitLab pipeline trigger token', /(?<![A-Za-z0-9_-])glptt-(?=[A-Za-z0-9_-]{0,127}[A-Z])[A-Za-z0-9_-]{20,128}(?![A-Za-z0-9_-])/g],
   // GitLab deploy tokens have a distinct prefix. Requiring uppercase is a
   // heuristic to avoid lowercase identifiers, not a guarantee of token format.
