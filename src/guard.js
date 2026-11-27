@@ -122,6 +122,8 @@ const SECRET_RULES = [
   ['ReadMe API token', /(?<![A-Za-z0-9_])rdme_[a-z0-9]{70}(?![A-Za-z0-9_])/g],
   ['Linear API key', /(?<![A-Za-z0-9_])lin_api_[A-Za-z0-9]{40}(?![A-Za-z0-9_])/g],
   ['DigitalOcean token', /(?<![A-Za-z0-9_])(?:dop|doo|dor)_v1_[0-9a-f]{64}(?![A-Za-z0-9_])/g],
+  // Dropbox short-lived tokens have sl. or sl.u. prefixes; size is opaque and unbounded.
+  ['Dropbox OAuth access token', /(?<![A-Za-z0-9_.-])sl\.(?:u\.)?[A-Za-z0-9_-]{50,}(?![A-Za-z0-9_-])/g],
   // Doppler publishes strict formats for its CLI, personal, service, service
   // account, identity, SCIM and audit tokens; service tokens may include an
   // environment segment. Require full tokens, never match a token prefix.
