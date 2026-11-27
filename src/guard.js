@@ -156,6 +156,8 @@ const SECRET_RULES = [
   // Cookie and Set-Cookie headers can carry session credentials that are too
   // short or low-entropy for a generic token detector. Preserve the header name.
   ['HTTP cookie header', /^([ \t]*(?:Cookie|Set-Cookie)[ \t]*:[ \t]*)(?=[^=;\r\n \t]+=[^\r\n]+)[^\r\n]+/gmi],
+  // Quoted Cookie headers in shell commands also carry bearer credentials.
+  ['HTTP cookie header', /(?<=["'])((?:Cookie|Set-Cookie)[ \t]*:[ \t]*)(?=[^=; \r\n"']+=[^ \r\n"']+)[^"'\r\n]+/gmi],
   ['JWT', /\beyJ[A-Za-z0-9_-]{10,}\.eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}/g],
   // Redact the value, not the closing quote; the normal password replacement
   // then preserves both delimiters even for spaces and escaped quotes.
