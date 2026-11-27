@@ -90,6 +90,8 @@ const SECRET_RULES = [
   // an optional bounded instance prefix is part of the credential.
   // Requiring uppercase in the token body is a heuristic, not a format guarantee.
   ['GitLab CI job token', /(?<![A-Za-z0-9_-])(?:[A-Za-z0-9][A-Za-z0-9_-]{1,31}-)?glcbt-(?=[A-Za-z0-9_.-]*[A-Z])(?:[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}|[A-Za-z0-9_-]{20,128})(?![A-Za-z0-9_.-])/g],
+  // GitLab incoming mail tokens can create issues and merge requests as the token owner.
+  ['GitLab incoming mail token', /(?<![A-Za-z0-9_-])glimt-[A-Za-z0-9_-]{25}(?![A-Za-z0-9_-])/g],
   ['GitLab runner authentication token', /(?<![A-Za-z0-9_-])(?:glrt|glrtr)-[A-Za-z0-9_-]{20,128}(?![A-Za-z0-9_-])/g],
   // GitLab pipeline trigger tokens use the distinct glptt- prefix. Require
   // a mixed-case opaque payload to avoid masking identifiers from docs.
