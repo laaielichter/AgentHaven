@@ -62,6 +62,8 @@ const SECRET_RULES = [
   ['Brevo API key', /(?<![A-Za-z0-9_-])xkeysib-[0-9a-fA-F]{64}-[A-Za-z0-9]{16}(?![A-Za-z0-9_-])/g],
   ['SendGrid key', /\bSG\.[A-Za-z0-9_-]{22}\.[A-Za-z0-9_-]{43}(?=[^A-Za-z0-9_-]|$)/g],
   // The encoded JSON payload is bounded; the last 43 characters are the secret.
+  // Sentry user tokens carry the sntryu_ prefix and a 64-character lowercase hexadecimal body.
+  ['Sentry user token', /(?<![A-Za-z0-9_])sntryu_[a-f0-9]{64}(?![A-Za-z0-9_])/g],
   ['Sentry organization token', /(?<![A-Za-z0-9_])sntrys_eyJ[A-Za-z0-9+/]{16,800}={0,2}_[A-Za-z0-9+/]{43}(?![A-Za-z0-9+/=_])/g],
   // Docker Hub PATs/OATs have long mixed-case bodies, unlike snake_case or kebab-case names.
   // Do not cap the body length: an unusually long credential should be redacted too.
