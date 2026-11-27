@@ -138,6 +138,8 @@ const SECRET_RULES = [
   // Require token boundaries so no partial credentials are marked as removed.
   ['Google OAuth client secret', /(?<![A-Za-z0-9_-])GOCSPX-[A-Za-z0-9_-]{28}(?![A-Za-z0-9_-])/g],
   ['Azure Storage account key', /(?<![A-Za-z0-9_])(AccountKey[ \t]*=[ \t]*)[A-Za-z0-9+/]{86}==(?=[^A-Za-z0-9+/=]|$)/gi],
+  // Inngest signing keys authenticate server requests; require a complete 64-hex signing value instead of matching a prefix.
+  ['Inngest signing key', /(?<![A-Za-z0-9_-])signkey-(?:prod|test|dev)-[a-fA-F0-9]{64}(?![A-Za-z0-9_-])/g],
   ['Slack token', /\bxox[abposr]-[A-Za-z0-9-]{10,}/g],
   // App-level (Socket Mode) tokens have a version, Slack app ID, numeric ID and
   // long secret; rotating access tokens add xoxe. No upper bound: oversized
