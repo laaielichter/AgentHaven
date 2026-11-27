@@ -109,6 +109,8 @@ const SECRET_RULES = [
   ['GitLab deploy token', /(?<=^|[^A-Za-z0-9_-])gldt-(?=[A-Za-z0-9_-]*[A-Z])[A-Za-z0-9_-]{20,128}(?=[^A-Za-z0-9_-]|$)/g],
   // Match the documented 1Password service-account prefix and long base64 payload.
   // Bound the payload to avoid scanning arbitrarily long strings on shared boards.
+  // 1Password account Secret Keys use the A3 prefix and grouped uppercase segments.
+  ['1Password Secret Key', /(?<![A-Za-z0-9_.-])A3-[A-Z0-9]{6}-(?:[A-Z0-9]{11}|[A-Z0-9]{6}-[A-Z0-9]{5})-[A-Z0-9]{5}-[A-Z0-9]{5}-[A-Z0-9]{5}(?![A-Za-z0-9_.-])/g],
   ['1Password service account token', /(?<![A-Za-z0-9_])ops_eyJ[A-Za-z0-9+/]{250,4096}={0,3}(?![A-Za-z0-9_+/=])/g],
   // Cloudflare uses 40 alphanumeric characters and an eight-digit hex checksum.
   ['Cloudflare API credential', /(?<![A-Za-z0-9_-])(?:cfk|cfut|cfat)_[A-Za-z0-9]{40}[0-9a-fA-F]{8}(?![A-Za-z0-9_-])/g],
