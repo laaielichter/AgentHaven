@@ -71,6 +71,8 @@ const SECRET_RULES = [
   ['Supabase secret key', /(?<![A-Za-z0-9_])sb_secret_(?=[A-Za-z0-9_-]{0,30}[A-Z])[A-Za-z0-9_-]{22}_[A-Za-z0-9_-]{8}(?![A-Za-z0-9_-])/g],
   // Vercel's five credential types have distinct prefixes; the opaque payload
   // bound is a detection heuristic, not a fixed-format token validator.
+  // Heroku's v2 keys contain the HRKU-AA marker and a 58-character token body.
+  ['Heroku API key v2', /(?<![A-Za-z0-9_-])HRKU-AA[A-Za-z0-9_-]{58}(?![A-Za-z0-9_-])/g],
   ['Vercel API credential', /(?<![A-Za-z0-9_-])vc[piark]_[A-Za-z0-9]{40,80}(?![A-Za-z0-9_-])/g],
   ['Grafana service account token', /(?<![A-Za-z0-9_-])glsa_[A-Za-z0-9]{32}_[A-Fa-f0-9]{8}(?![A-Za-z0-9_-])/g],
   // Tailscale API, auth, OAuth client, SCIM and webhook keys use typed,
