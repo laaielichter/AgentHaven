@@ -36,6 +36,8 @@ function isTelegramBotToken(token) {
 }
 
 const SECRET_RULES = [
+  // Only complete 64-character Honeycomb ingest credentials; short hcaik_ IDs are public.
+  ['Honeycomb ingest API key', /(?<![A-Za-z0-9_-])hc[a-z]i[ck]_[a-z0-9]{58}(?![A-Za-z0-9_-])/g],
   ['private key', /-----BEGIN (?:[A-Z ]+ )?PRIVATE KEY-----[\s\S]*?(?:-----END (?:[A-Z ]+ )?PRIVATE KEY-----|$)/g],
   ['Anthropic key', /\bsk-ant-[A-Za-z0-9_-]{20,}/g],
   ['OpenAI key', /\bsk-(?:proj-|svcacct-|admin-)?[A-Za-z0-9_-]{20,}/g],
