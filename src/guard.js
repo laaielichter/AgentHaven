@@ -36,6 +36,9 @@ function isTelegramBotToken(token) {
 }
 
 const SECRET_RULES = [
+  // OpenPGP secret-key armor uses PRIVATE KEY BLOCK, unlike PEM PRIVATE KEY.
+  // Mask the entire block, including a truncated block without its END line.
+  ['OpenPGP private key', /-----BEGIN PGP PRIVATE KEY BLOCK-----[\s\S]*?(?:-----END PGP PRIVATE KEY BLOCK-----|$)/g],
   ['private key', /-----BEGIN (?:[A-Z ]+ )?PRIVATE KEY-----[\s\S]*?(?:-----END (?:[A-Z ]+ )?PRIVATE KEY-----|$)/g],
   ['Anthropic key', /\bsk-ant-[A-Za-z0-9_-]{20,}/g],
   ['OpenAI key', /\bsk-(?:proj-|svcacct-|admin-)?[A-Za-z0-9_-]{20,}/g],
