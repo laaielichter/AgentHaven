@@ -144,6 +144,8 @@ const SECRET_RULES = [
   // phc_ project keys are public and deliberately excluded.
   ['PostHog private token', /(?<![A-Za-z0-9_-])(?:(?:phx|phs)_[2-9A-HJ-NP-Za-km-z]{48,}|(?:pha|phr)_[2-9A-HJ-NP-Za-km-z]{44,})(?![A-Za-z0-9_-])/g, isPostHogPrivateToken],
   ['Hugging Face token', /\bhf_[A-Za-z0-9]{30,}/g],
+  // Clojars deploy tokens contain 30 random bytes as lowercase hex after CLOJARS_.
+  ['Clojars deploy token', /(?<![A-Za-z0-9_.-])CLOJARS_[0-9a-f]{60}(?![A-Za-z0-9_.-])/g],
   ['npm token', /\bnpm_[A-Za-z0-9]{36}\b/g],
   // Use the scanner-observed token shape, not a broad prefix that eats identifiers.
   ['Notion integration token', /(?<![A-Za-z0-9_-])ntn_[0-9]{11}[A-Za-z0-9]{35}(?![A-Za-z0-9_-])/g],
