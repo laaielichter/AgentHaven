@@ -94,6 +94,8 @@ const SECRET_RULES = [
   ['Postman API key', /(?<![A-Za-z0-9_-])PMAK-[a-fA-F0-9]{24}-[a-fA-F0-9]{34}(?![A-Za-z0-9_-])/g],
   // Bitbucket API tokens use ATAT headers; match the 192-character current format.
   ['Bitbucket API token', /(?<![A-Za-z0-9_-])ATATT3xFfGF0[A-Za-z0-9_-]{171}=[0-9A-F]{8}(?![A-Za-z0-9_=-])/g],
+  // JFrog's legacy API keys and replacement reference tokens have fixed prefixes and lengths.
+  ['JFrog Artifactory credential', /(?<![A-Za-z0-9_.-])(?:AKCp[A-Za-z0-9]{69}|cmVmd[A-Za-z0-9]{59})(?![A-Za-z0-9_.-])/g],
   ['GitLab token', /\bglpat-[A-Za-z0-9_-]{20,}/g],
   // GitLab CI job tokens grant scoped access while a pipeline runs.
   // Handle both legacy opaque tokens and the newer three-segment JWT form;
