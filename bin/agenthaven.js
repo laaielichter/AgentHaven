@@ -105,6 +105,38 @@ const requireKnownWorkspace = (name) => {
   if (!known.includes(name)) fail(`no workspace named "${name}"; existing workspaces: ${known.join(', ')}`);
 };
 
+// The commands people type, for the "Did you mean" hint on a typo. Keep it in
+// step with the switch below; `run-checks` is internal and left out (#209).
+const COMMANDS = ['serve', 'mcp', 'tools', 'connect', 'config', 'link', 'unlink', 'sync', 'instructions',
+  'board', 'status', 'repo', 'checks', 'radar', 'dream', 'hook', 'version', 'help'];
+// Edit distance where swapping two neighbouring letters counts as one edit, so
+// `stauts` is one edit from `status`.
+const editDistance = (a, b) => {
+  const d = Array.from({ length: a.length + 1 }, (_, i) => [i, ...Array(b.length).fill(0)]);
+  for (let j = 1; j <= b.length; j++) d[0][j] = j;
+  for (let i = 1; i <= a.length; i++) {
+    for (let j = 1; j <= b.length; j++) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + cost);
+      if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) d[i][j] = Math.min(d[i][j], d[i - 2][j - 2] + 1);
+    }
+  }
+  return d[a.length][b.length];
+};
+// The closest command, if it is close enough: one edit for short words, two
+// for longer ones, so `banana` or `xyz` get no suggestion.
+const closestCommand = (typed) => {
+  const word = typed.toLowerCase();
+  const limit = word.length <= 4 ? 1 : 2;
+  let best = null;
+  let bestDistance = limit + 1;
+  for (const name of COMMANDS) {
+    const distance = editDistance(word, name);
+    if (distance < bestDistance) { best = name; bestDistance = distance; }
+  }
+  return best;
+};
+
 switch (cmd) {
   case 'mcp':
     require('../src/mcp').serve({ store: store(), agent: flag('agent', process.env.AGENTHAVEN_AGENT), tools: flag('tools', process.env.AGENTHAVEN_TOOLS) });
@@ -290,8 +322,10 @@ switch (cmd) {
   case 'help': case '--help': case '-h':
     console.log(HELP);
     break;
-  default:
-    console.error(`Unknown command "${cmd}".\n`);
-    console.error(HELP);
+  default: {
+    const suggestion = closestCommand(cmd);
+    console.error(`Unknown command "${cmd}".${suggestion ? ` Did you mean "${suggestion}"?` : ''}`);
+    console.error('Run "agenthaven --help" for all commands.');
     process.exit(1);
+  }
 }

@@ -118,3 +118,29 @@ test('<command> --help and -h print the usage without running the command (#179)
   assert.ok(!fs.existsSync(path.join(share, 'WORKBOARD.md')), 'link --help did not link the folder');
   assert.deepEqual(fs.readdirSync(home), [], 'nothing was written to AGENTHAVEN_HOME');
 });
+
+test('a mistyped command suggests the closest command instead of printing the help (#209)', () => {
+  const { home, run } = fixture();
+  for (const [typed, meant] of [['stauts', 'status'], ['boards', 'board'], ['conect', 'connect']]) {
+    const res = run(typed);
+    assert.equal(res.status, 1, `${typed} exits 1`);
+    assert.equal(res.stdout, '');
+    assert.equal(res.stderr,
+      `Unknown command "${typed}". Did you mean "${meant}"?\nRun "agenthaven --help" for all commands.\n`);
+  }
+
+  const banana = run('banana');
+  assert.equal(banana.status, 1, 'banana exits 1');
+  assert.equal(banana.stderr, 'Unknown command "banana".\nRun "agenthaven --help" for all commands.\n');
+  assert.doesNotMatch(banana.stderr, /Usage:/, 'the full help is not printed');
+
+  assert.equal(run('run-chekcs').stderr.includes('run-checks'), false, 'the internal run-checks is never suggested');
+
+  for (const args of [[], ['help'], ['--help']]) {
+    const res = run(...args);
+    assert.equal(res.status, 0, `"${args.join(' ')}" exits 0`);
+    assert.match(res.stdout, /^AgentHaven — one shared work board/);
+    assert.match(res.stdout, /Usage:/);
+  }
+  assert.deepEqual(fs.readdirSync(home), [], 'nothing was written to AGENTHAVEN_HOME');
+});
