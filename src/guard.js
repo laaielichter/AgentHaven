@@ -70,6 +70,8 @@ const SECRET_RULES = [
   // Docker Hub PATs/OATs have long mixed-case bodies, unlike snake_case or kebab-case names.
   // Do not cap the body length: an unusually long credential should be redacted too.
   ['Docker Hub access token', /(?<![A-Za-z0-9_])dckr_(?:pat|oat)_(?=[A-Za-z0-9-]*[A-Z])[A-Za-z0-9-]{27,}(?![A-Za-z0-9_-])/g],
+  // Pinecone project credentials contain pcsk_, a 5/6-character label, and 63 characters of secret material.
+  ['Pinecone API key', /(?<![A-Za-z0-9_])pcsk_[A-Za-z0-9]{5,6}_[A-Za-z0-9]{63}(?![A-Za-z0-9_-])/g],
   // Supabase keys have a 22-character random part and 8-character checksum.
   // At least one uppercase letter avoids matching ordinary snake_case names.
   ['Supabase secret key', /(?<![A-Za-z0-9_])sb_secret_(?=[A-Za-z0-9_-]{0,30}[A-Z])[A-Za-z0-9_-]{22}_[A-Za-z0-9_-]{8}(?![A-Za-z0-9_-])/g],
