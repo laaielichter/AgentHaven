@@ -162,6 +162,8 @@ const SECRET_RULES = [
   // credentials must still be removed rather than leaked.
   ['Slack app-level token', /(?<![A-Za-z0-9_.-])(?:xoxe\.)?xapp-[0-9]+-A[A-Z0-9]{6,}-[0-9]{10,}-[A-Za-z0-9]{32,}(?![A-Za-z0-9_-])/g],
   ['Slack incoming webhook URL', /(?<![A-Za-z0-9._-])https:\/\/hooks\.(?:slack|slack-gov)\.com\/services\/[TE][A-Z0-9]{8,20}\/B[A-Z0-9]{8,20}\/[A-Za-z0-9]{24,128}(?![A-Za-z0-9_-])/gi],
+  // EasyPost production and test keys use distinct EZAK/EZTK prefixes.
+  ['EasyPost API key', /(?<![A-Za-z0-9_.-])EZ(?:AK|TK)[A-Za-z0-9]{54}(?![A-Za-z0-9_.-])/g],
   ['Stripe key', /\b(?:sk|rk)_(?:live|test)_[A-Za-z0-9]{20,}/g],
   // Webhook endpoint signing secrets are separate from Stripe API keys.
   ['Stripe webhook secret', /(?<![A-Za-z0-9_])whsec_[A-Za-z0-9]{20,128}(?![A-Za-z0-9_])/g],
