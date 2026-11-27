@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 'use strict';
+const fs = require('node:fs');
 const path = require('node:path');
 const { Store, defaultDataDir } = require('../src/store');
 
@@ -226,6 +227,8 @@ switch (cmd) {
     const wb = require('../src/workboard');
     const s = store();
     const abs = path.resolve(dir);
+    const st = fs.statSync(abs, { throwIfNoEntry: false });
+    if (st && !st.isDirectory()) fail(`not a folder: ${abs}`);
     s.setSettings({ workboardDir: abs, workboardResults: [] });
     const r = wb.syncOnce(s, abs);
     console.log(`Linked workspace "${workspace}" to ${r.file}\nKeep "agenthaven serve" or the desktop app running to sync automatically, or run "agenthaven sync --watch".\n\nAdd this to AGENTS.md / CLAUDE.md / GEMINI.md so every agent knows:\n\n${wb.agentInstructions(abs)}`);
