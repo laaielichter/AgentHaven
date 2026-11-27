@@ -58,6 +58,8 @@ const SECRET_RULES = [
   ['HashiCorp Vault token', /(?<![A-Za-z0-9_-])hv[sbr]\.(?=[A-Za-z0-9_-]*[A-Z])[A-Za-z0-9_-]{24,}(?![A-Za-z0-9_-])/g],
   // Terraform Cloud API tokens contain a distinctive .atlasv1. component.
   ['Terraform Cloud API token', /(?<![A-Za-z0-9_-])[A-Za-z0-9]{14}\.atlasv1\.[A-Za-z0-9_-]{60,70}(?![A-Za-z0-9_-])/g],
+  // Mailchimp API keys append an -us data-centre suffix to 32 hex characters.
+  ['Mailchimp API key', /(?<![A-Za-z0-9_-])[0-9a-fA-F]{32}-us[0-9]{1,2}(?![A-Za-z0-9_-])/g],
   ['SendGrid key', /\bSG\.[A-Za-z0-9_-]{22}\.[A-Za-z0-9_-]{43}(?=[^A-Za-z0-9_-]|$)/g],
   // The encoded JSON payload is bounded; the last 43 characters are the secret.
   ['Sentry organization token', /(?<![A-Za-z0-9_])sntrys_eyJ[A-Za-z0-9+/]{16,800}={0,2}_[A-Za-z0-9+/]{43}(?![A-Za-z0-9+/=_])/g],
