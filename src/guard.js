@@ -86,6 +86,8 @@ const SECRET_RULES = [
   // Pulumi Cloud credentials use pul- followed by a lowercase hexadecimal body.
   ['Pulumi Cloud access token', /(?<![A-Za-z0-9_-])pul-[0-9a-f]{40}(?![A-Za-z0-9_-])/g],
   ['Replicate token', /\br8_[A-Za-z0-9]{30,}\b/g],
+  // Fly.io scoped macaroons use the fm2_ prefix and may carry long base64 payloads.
+  ['Fly.io macaroon token', /(?<![A-Za-z0-9_-])fm2_[A-Za-z0-9+/=_-]{40,}(?![A-Za-z0-9+/=_-])/g],
   ['Discord bot token', /(?<![A-Za-z0-9_-])[A-Za-z0-9_-]{23,28}\.[A-Za-z0-9_-]{6,7}\.[A-Za-z0-9_-]{27,38}(?=[^A-Za-z0-9_-]|$)/g, isDiscordBotToken],
   // The webhook URL itself grants unauthenticated posting access.
   ['Discord webhook URL', /\bhttps:\/\/(?:discord|discordapp)\.com\/api(?:\/v\d{1,2})?\/webhooks\/\d{17,20}\/[A-Za-z0-9_-]{30,128}(?![A-Za-z0-9_-])/g],
