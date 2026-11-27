@@ -121,6 +121,8 @@ const SECRET_RULES = [
   // ReadMe API tokens use rdme_ followed by 70 lowercase alphanumeric characters.
   ['ReadMe API token', /(?<![A-Za-z0-9_])rdme_[a-z0-9]{70}(?![A-Za-z0-9_])/g],
   ['Linear API key', /(?<![A-Za-z0-9_])lin_api_[A-Za-z0-9]{40}(?![A-Za-z0-9_])/g],
+  // New Relic User API keys are NRAK-prefixed; the 27-character body is bounded.
+  ['New Relic user API key', /(?<![A-Za-z0-9_-])NRAK-[A-Za-z0-9]{27}(?![A-Za-z0-9_-])/g],
   ['DigitalOcean token', /(?<![A-Za-z0-9_])(?:dop|doo|dor)_v1_[0-9a-f]{64}(?![A-Za-z0-9_])/g],
   // Doppler publishes strict formats for its CLI, personal, service, service
   // account, identity, SCIM and audit tokens; service tokens may include an
