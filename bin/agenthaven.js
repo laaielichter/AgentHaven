@@ -236,10 +236,17 @@ switch (cmd) {
     console.log(`Linked workspace "${workspace}" to ${r.file}\nKeep "agenthaven serve" or the desktop app running to sync automatically, or run "agenthaven sync --watch".\n\nAdd this to AGENTS.md / CLAUDE.md / GEMINI.md so every agent knows:\n\n${wb.agentInstructions(abs)}`);
     break;
   }
-  case 'unlink':
-    store().setSettings({ workboardDir: null });
+  case 'unlink': {
+    requireKnownWorkspace(workspace);
+    const s = store();
+    if (!s.getSettings().workboardDir) {
+      console.log(`Workspace "${workspace}" is not linked to a folder.`);
+      break;
+    }
+    s.setSettings({ workboardDir: null });
     console.log(`Workspace "${workspace}" is no longer shared as files.`);
     break;
+  }
   case 'sync': {
     const wb = require('../src/workboard');
     const s = store();

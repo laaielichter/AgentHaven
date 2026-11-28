@@ -2,7 +2,7 @@
 // #79: link / sync / unlink / instructions / board / config have library tests,
 // but no test ran the real CLI switch. These tests start bin/agenthaven.js in a
 // temporary AGENTHAVEN_HOME and a temporary shared folder, so a wrong argument
-// index or a renamed setting fails CI. Only tests change; no production code.
+// index or a renamed setting fails CI.
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
@@ -76,7 +76,21 @@ test('unlink stops the sharing: sync and instructions then refuse', () => {
     assert.match(refused.stderr, /is not linked to a folder; run: agenthaven link <folder>/);
   }
 });
+test('unlink refuses an unknown workspace without creating it', () => {
+  const { home, run } = fixture();
+  const bad = run('unlink', '--workspace', 'mian');
+  assert.equal(bad.status, 1);
+  assert.equal(bad.stdout, '');
+  assert.match(bad.stderr, /no workspace named "mian"; existing workspaces: default/);
+  assert.ok(!fs.existsSync(path.join(home, 'mian.json')), 'unknown workspace was not created');
+});
 
+test('unlink reports when a known workspace is not linked', () => {
+  const { run } = fixture();
+  const unlink = run('unlink');
+  assert.equal(unlink.status, 0);
+  assert.match(unlink.stdout, /Workspace "default" is not linked to a folder/);
+});
 // #128: a typo in --workspace (or in AGENTHAVEN_WORKSPACE) used to print an
 // empty board and exit 0. Only the two read-only commands refuse; `default`
 // still counts as existing before any file has been written.
