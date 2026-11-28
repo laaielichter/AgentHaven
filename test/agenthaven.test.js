@@ -82,7 +82,7 @@ test('CLI prints one line for mistakes a person can fix, and a stack for real bu
     [['radar'], /no repository set/],
     [['repo', fs.mkdtempSync(path.join(os.tmpdir(), 'ah-notgit-'))], /not a git repository/],
     [['status', '--workspace', '../evil'], /invalid workspace name/],
-    [['connect', '--off', 'nope'], /unknown client nope/],
+    [['connect', '--off', 'nope'], /unknown client "nope"; use one of: .*claude-code/],
     [['mcp', '--tools', 'bogus'], /Unknown tool profile: bogus/],
     [['serve', '--port', 'abc'], /--port must be a number from 0 to 65535, got "abc"/],
     [['serve', '--port', '99999'], /--port must be a number from 0 to 65535, got "99999"/],
@@ -171,8 +171,21 @@ test('CLI connect --off requires a client before changing configuration', () => 
 
   assert.equal(run('claude-code').status, 0);
   assert.ok(JSON.parse(fs.readFileSync(config, 'utf8')).mcpServers.agenthaven);
-  assert.equal(run('--off', 'claude-code').status, 0);
+  const removed = run('--off', 'claude-code');
+  assert.equal(removed.status, 0);
+  assert.match(removed.stdout, /^Disconnected /);
   assert.deepEqual(JSON.parse(fs.readFileSync(config, 'utf8')).mcpServers, {});
+
+  // Nothing left to remove: say so instead of claiming a disconnect.
+  const again = run('--off', 'claude-code');
+  assert.equal(again.status, 0);
+  assert.match(again.stdout, /was not connected .*auto-connect will leave it off/);
+  assert.doesNotMatch(again.stdout, /Disconnected/);
+
+  // A mistyped client lists the valid ones, exits 1 and saves nothing.
+  const typo = run('--off', 'cursr');
+  assert.equal(typo.status, 1);
+  assert.match(typo.stderr, /unknown client "cursr"; use one of: .*cursor/);
 });
 
 test('CLI checks lists saved commands and only clears them explicitly', () => {

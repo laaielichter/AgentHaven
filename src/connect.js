@@ -136,18 +136,18 @@ function uninstall(clientId, opts = {}) {
   if (!client) throw Object.assign(new Error(`unknown client ${clientId}`), { code: 'INVALID' });
   if (client.format === 'toml') {
     const text = readIfExists(client.file);
-    if (!text || !TOML_RE.test(text)) return client;
+    if (!text || !TOML_RE.test(text)) return { ...client, removed: false };
     backup(client, text);
     writeAtomic(client.file, text.replace(TOML_RE, '').replace(/\n{3,}/g, '\n\n'));
-    return client;
+    return { ...client, removed: true };
   }
   const { raw, config } = readJson(client);
   const key = client.key || 'mcpServers';
-  if (!config[key] || !config[key][NAME]) return client;
+  if (!config[key] || !config[key][NAME]) return { ...client, removed: false };
   backup(client, raw);
   delete config[key][NAME];
   writeAtomic(client.file, `${JSON.stringify(config, null, 2)}\n`);
-  return client;
+  return { ...client, removed: true };
 }
 
 // Claude Code with the AgentHaven plugin already has the tools; adding them again
