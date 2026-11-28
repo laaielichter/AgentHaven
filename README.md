@@ -92,14 +92,14 @@ For manual configuration, see the [MCP client setup guide](docs/guides/clients.m
 
 ## Status
 
-Version 0.6 (alpha): agent apps connect by themselves (Claude Desktop, Claude Code, Cursor, VS Code, Windsurf, Gemini CLI, Codex, LM Studio); a desktop app for Windows and macOS with updates from the dashboard, multiple workspaces and a live dashboard; a Claude Code plugin with hooks and slash commands. Installers are signed once the signing secrets are configured (see below).
+Version 0.6 (alpha): agent apps connect by themselves (Claude Desktop, Claude Code, Cursor, VS Code, Windsurf, Gemini CLI, Codex, LM Studio, Zed); a desktop app for Windows and macOS with updates from the dashboard, multiple workspaces and a live dashboard; a Claude Code plugin with hooks and slash commands. Installers are signed once the signing secrets are configured (see below).
 
 ## Install
 
 **Desktop app:** download the `.exe` (Windows) or `.dmg` (macOS) from [Releases](https://github.com/laaielichter/AgentHaven/releases), or as an artifact of the latest CI run.
 Unsigned builds: on Windows choose *More info → Run anyway*; on macOS right-click the app and choose *Open*.
 
-**Agents connect by themselves.** At start the desktop app finds the agent apps on your computer (Claude Desktop, Claude Code, Cursor, VS Code with Copilot, Windsurf, Gemini CLI, Codex and LM Studio) and adds AgentHaven to their MCP settings. A banner says which ones; restart those apps once. Agent apps you install later are connected within 10 minutes, and connections that point to an old copy of AgentHaven (after you move or update the app) are repaired. Every other setting is kept, files with comments are read too, and a `.agenthaven-backup` copy is made. Claude Code with [the plugin](#the-claude-code-plugin) is left alone, so its tools do not show twice.
+**Agents connect by themselves.** At start the desktop app finds the agent apps on your computer (Claude Desktop, Claude Code, Cursor, VS Code with Copilot, Windsurf, Gemini CLI, Codex, LM Studio and Zed) and adds AgentHaven to their MCP settings. A banner says which ones; restart those apps once. Agent apps you install later are connected within 10 minutes, and connections that point to an old copy of AgentHaven (after you move or update the app) are repaired. Every other setting is kept, files with comments are read too, and a `.agenthaven-backup` copy is made. Claude Code with [the plugin](#the-claude-code-plugin) is left alone, so its tools do not show twice.
 
 The **Connect agents** button in the dashboard header shows every app and its state, with *Connect*, *Reconnect* and *Disconnect*, and a switch to turn the automatic connection off. An app you disconnect stays disconnected. From a terminal: `agenthaven connect` (all installed apps), `agenthaven connect cursor codex`, `agenthaven connect --list`, `agenthaven connect --off cursor`. For Zed, JetBrains and other MCP clients use *Agents → Copy MCP Config*.
 
