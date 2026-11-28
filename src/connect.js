@@ -22,6 +22,11 @@ function clients({ home = os.homedir(), platform = process.platform, env = proce
   const claudeDir = path.join(appSupport, 'Claude');
   const codeUser = path.join(appSupport, 'Code', 'User');
   const codexHome = env.CODEX_HOME || path.join(home, '.codex');
+  const zedDir = platform === 'win32'
+    ? path.join(appData, 'Zed')
+    : platform === 'linux'
+      ? path.join(env.XDG_CONFIG_HOME || path.join(home, '.config'), 'zed')
+      : path.join(home, '.config', 'zed');
   return {
     claude: { label: 'Claude Desktop', agent: 'claude', file: path.join(claudeDir, 'claude_desktop_config.json'), detect: [claudeDir] },
     'claude-code': { label: 'Claude Code', agent: 'claude-code', file: path.join(home, '.claude.json'), detect: [path.join(home, '.claude.json'), path.join(home, '.claude')], plugins: path.join(home, '.claude', 'plugins', 'installed_plugins.json') },
@@ -31,6 +36,14 @@ function clients({ home = os.homedir(), platform = process.platform, env = proce
     gemini: { label: 'Gemini CLI', agent: 'gemini', file: path.join(home, '.gemini', 'settings.json'), detect: [path.join(home, '.gemini')] },
     codex: { label: 'Codex', agent: 'codex', file: path.join(codexHome, 'config.toml'), detect: [codexHome], format: 'toml' },
     lmstudio: { label: 'LM Studio', agent: 'lmstudio', file: path.join(home, '.lmstudio', 'mcp.json'), detect: [path.join(home, '.lmstudio')] },
+
+    zed: {
+      label: 'Zed',
+      agent: 'zed',
+      file: path.join(zedDir, 'settings.json'),
+      detect: [zedDir],
+      key: 'context_servers',
+    },
   };
 }
 

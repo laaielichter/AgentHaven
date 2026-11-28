@@ -66,7 +66,7 @@ Usage:
   agenthaven hook <event> [--agent name]                     editor hook: session-start, pre-tool-use or stop (JSON on stdin)
   agenthaven connect      [client ...] [--list] [--off client]  connect every installed agent app (Claude Desktop,
                                                              Claude Code, Cursor, VS Code, Windsurf, Gemini CLI,
-                                                             Codex, LM Studio), or only the ones named
+                                                             Codex, LM Studio, Zed), or only the ones named
   agenthaven config       [--agent name] [--workspace name]  print an MCP client config snippet
   agenthaven link <folder> [--workspace name]                share the board as WORKBOARD.md + LOGBOOK.md in a folder,
                                                              so agents without MCP can join by editing a file

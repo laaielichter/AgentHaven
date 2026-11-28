@@ -151,6 +151,41 @@ test('JSON with comments and trailing commas (VS Code, Cursor) can be connected'
   assert.ok(cfg.servers.agenthaven);
   assert.match(fs.readFileSync(`${c.vscode.file}.agenthaven-backup`, 'utf8'), /my servers/, 'the original with comments is kept as backup');
 });
+test('Zed can be connected while preserving existing settings and creating a backup', () => {
+  const { opts, entryFor, c } = fakeHome();
+  fs.mkdirSync(path.dirname(c.zed.file), { recursive: true });
+
+  const original = JSON.stringify({
+    theme: 'One Dark',
+    context_servers: {
+      other: { command: 'existing-server' },
+    },
+  }, null, 2);
+
+  fs.writeFileSync(c.zed.file, original);
+
+  assert.equal(state(connect.detect({ entryFor, ...opts }), 'zed'), 'not-connected');
+
+  connect.install('zed', entryFor('zed'), opts);
+
+  const cfg = JSON.parse(fs.readFileSync(c.zed.file, 'utf8'));
+
+  assert.equal(cfg.theme, 'One Dark', 'existing Zed settings are preserved');
+  assert.equal(cfg.context_servers.other.command, 'existing-server');
+  assert.ok(cfg.context_servers.agenthaven, 'AgentHaven server is added');
+  assert.deepEqual(
+    cfg.context_servers.agenthaven.args.slice(1, 4),
+    ['mcp', '--agent', 'zed'],
+  );
+
+  assert.equal(
+    fs.readFileSync(`${c.zed.file}.agenthaven-backup`, 'utf8'),
+    original,
+    'the original settings are backed up',
+  );
+
+  assert.equal(state(connect.detect({ entryFor, ...opts }), 'zed'), 'connected');
+});
 
 test('npx: the entry starts AgentHaven through npx, not from its cache folder', () => {
   const e = connect.nodeEntryFor('codex', 'default', { dir: '/home/u/.npm/_npx/abc/node_modules/agenthaven/src', platform: 'linux' });
