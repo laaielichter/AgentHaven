@@ -189,10 +189,12 @@ switch (cmd) {
     }
     if (has('list')) { list(); break; }
     if (off) {
+      const all = connect.clients();
+      if (!all[off]) fail(`unknown client "${off}"; use one of: ${Object.keys(all).join(', ')}`);
       const c = connect.uninstall(off);
       const prefs = connect.loadPrefs(defaultDataDir());
       connect.savePrefs(defaultDataDir(), { ...prefs, off: [...prefs.off, off] });
-      console.log(`Disconnected ${c.label} (${c.file}).`);
+      console.log(c.removed ? `Disconnected ${c.label} (${c.file}).` : `${c.label} was not connected (${c.file}); auto-connect will leave it off.`);
       break;
     }
     let results;
