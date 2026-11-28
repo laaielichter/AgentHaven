@@ -31,6 +31,18 @@ function clients({ home = os.homedir(), platform = process.platform, env = proce
     gemini: { label: 'Gemini CLI', agent: 'gemini', file: path.join(home, '.gemini', 'settings.json'), detect: [path.join(home, '.gemini')] },
     codex: { label: 'Codex', agent: 'codex', file: path.join(codexHome, 'config.toml'), detect: [codexHome], format: 'toml' },
     lmstudio: { label: 'LM Studio', agent: 'lmstudio', file: path.join(home, '.lmstudio', 'mcp.json'), detect: [path.join(home, '.lmstudio')] },
+
+    zed: {
+      label: 'Zed',
+      agent: 'zed',
+      file: platform === 'win32'
+      ? path.join(appData, 'Zed', 'settings.json')
+      : path.join(env.XDG_CONFIG_HOME || path.join(home, '.config'), 'zed', 'settings.json'),
+      detect: [platform === 'win32'
+      ? path.join(appData, 'Zed')
+      : path.join(env.XDG_CONFIG_HOME || path.join(home, '.config'), 'zed')],
+      key: 'context_servers',
+    },
   };
 }
 
