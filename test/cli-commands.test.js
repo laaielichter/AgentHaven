@@ -144,3 +144,23 @@ test('a mistyped command suggests the closest command instead of printing the he
   }
   assert.deepEqual(fs.readdirSync(home), [], 'nothing was written to AGENTHAVEN_HOME');
 });
+
+test('link refuses an existing file without saving it as the linked folder (#246)', () => {
+  const { home, run } = fixture();
+  const file = path.join(home, 'notes.txt');
+  fs.writeFileSync(file, 'hello\n');
+
+  const res = run('link', file);
+  assert.equal(res.status, 1, 'linking a file exits 1');
+  assert.equal(res.stdout, '');
+  assert.equal(res.stderr, `not a folder: ${file}\n`);
+
+  const instr = run('instructions');
+  assert.equal(instr.status, 1, 'workspace remains unlinked');
+  assert.match(instr.stderr, /is not linked to a folder; run: agenthaven link <folder>/);
+
+  const newDir = path.join(home, 'new-board-dir');
+  const created = run('link', newDir);
+  assert.equal(created.status, 0, 'linking a non-existent folder still creates it');
+  assert.ok(fs.existsSync(path.join(newDir, 'WORKBOARD.md')));
+});
